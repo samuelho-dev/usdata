@@ -1,18 +1,40 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+  provider        = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model CensusKey {
+  census_variable String       @id @unique
+  description     String
+  census_data     CensusData[]
+
+  @@index([census_variable])
+}
+
+model CensusData {
+  id           Int         @id @default(autoincrement())
+  census_key   CensusKey   @relation(fields: [key], references: [census_variable])
+  key          String
+  data         Int?
+  census_model CensusModel @relation(fields: [census_id], references: [id])
+  census_id    String
+
+  @@index([key])
+  @@index([census_id])
+}
+
+model CensusModel {
+  id         String       @id @default(cuid())
+  year       Int
+  state      String
+  FIPS       String
+  data       CensusData[]
+  created_at DateTime     @default(now())
+
+  @@unique([year, state])
 }
