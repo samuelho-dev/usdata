@@ -2,6 +2,9 @@
   "name": "citydata",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -17,7 +20,9 @@
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
+    "axios": "^1.4.0",
     "next": "^13.4.2",
+    "nivo": "^0.31.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "superjson": "1.12.2",
@@ -25,7 +30,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.37.0",
-    "@types/node": "^18.16.0",
+    "@types/node": "^18.16.19",
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
@@ -39,7 +44,8 @@
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prisma": "^4.14.0",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5.0.4"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "ct3aMetadata": {
     "initVersion": "7.15.0"
