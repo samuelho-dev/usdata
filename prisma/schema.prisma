@@ -36,5 +36,5 @@ model CensusModel {
   data       CensusData[]
   created_at DateTime     @default(now())
 
-  @@unique([year, state])
+  @@unique([year, FIPS])
 }
