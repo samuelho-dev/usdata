@@ -1,27 +1,26 @@
 import { z } from "zod";
 
-const CensusKey = z.object({
+export const CensusKeySchema = z.object({
   census_variable: z.string(),
   description: z.string(),
 });
 
-const CensusData = z.object({
+export const CensusDataSchema = z.object({
   id: z.number(),
-  census_key: CensusKey,
   key: z.string(),
-  data: z.number().optional(),
+  data: z.number().nullable().optional(),
   census_id: z.string(),
 });
 
-const CensusModel = z.object({
+export const CensusModelSchema = z.object({
   id: z.string(),
   year: z.number(),
   state: z.string(),
   FIPS: z.string(),
-  data: z.array(CensusData),
+  data: z.array(CensusDataSchema),
   created_at: z.date(),
 });
 
-export type CensusKey = z.infer<typeof CensusKey>;
-export type CensusData = z.infer<typeof CensusData>;
-export type CensusModel = z.infer<typeof CensusModel>;
+export type CensusKeySchema = z.infer<typeof CensusKeySchema>;
+export type CensusDataSchema = z.infer<typeof CensusDataSchema>;
+export type CensusModelSchema = z.infer<typeof CensusModelSchema>;
