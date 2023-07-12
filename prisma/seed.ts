@@ -166,12 +166,12 @@ async function fetchCensus(year: number) {
                   where: {
                     year_state: {
                       year: year,
-                      state: el.state,
+                      state: el.abbr,
                     },
                   },
                   create: {
                     year: year,
-                    state: el.state,
+                    state: el.abbr,
                     FIPS: el.FIPS,
                   },
                 },
