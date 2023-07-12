@@ -1,5 +1,4 @@
 import React from "react";
-import { ResponsiveBar } from "@nivo/bar";
 import dynamic from "next/dynamic";
 
 const data = [
@@ -115,9 +114,118 @@ const ResponsiveBarChart = dynamic(
   { ssr: false }
 );
 
+const theme = {
+  text: {
+    fontSize: 11,
+    fill: "#ffffff",
+    outlineWidth: 0,
+    outlineColor: "transparent",
+  },
+  axis: {
+    domain: {
+      line: {
+        stroke: "#ffffff",
+        strokeWidth: 1,
+      },
+    },
+    legend: {
+      text: {
+        fontSize: 12,
+        fill: "#ffffff",
+        outlineWidth: 0,
+        outlineColor: "transparent",
+      },
+    },
+    ticks: {
+      line: {
+        stroke: "#777777",
+        strokeWidth: 1,
+      },
+      text: {
+        fontSize: 11,
+        fill: "#ffffff",
+        outlineWidth: 0,
+        outlineColor: "transparent",
+      },
+    },
+  },
+  grid: {
+    line: {
+      stroke: "#dddddd",
+      strokeWidth: 1,
+    },
+  },
+  legends: {
+    title: {
+      text: {
+        fontSize: 11,
+        fill: "#ffffff",
+        outlineWidth: 0,
+        outlineColor: "transparent",
+      },
+    },
+    text: {
+      fontSize: 11,
+      fill: "#ffffff",
+      outlineWidth: 0,
+      outlineColor: "transparent",
+    },
+    ticks: {
+      line: {},
+      text: {
+        fontSize: 10,
+        fill: "#ffffff",
+        outlineWidth: 0,
+        outlineColor: "transparent",
+      },
+    },
+  },
+  annotations: {
+    text: {
+      fontSize: 13,
+      fill: "#ffffff",
+      outlineWidth: 2,
+      outlineColor: "#ffffff",
+      outlineOpacity: 1,
+    },
+    link: {
+      stroke: "#000000",
+      strokeWidth: 1,
+      outlineWidth: 2,
+      outlineColor: "#ffffff",
+      outlineOpacity: 1,
+    },
+    outline: {
+      stroke: "#000000",
+      strokeWidth: 2,
+      outlineWidth: 2,
+      outlineColor: "#ffffff",
+      outlineOpacity: 1,
+    },
+    symbol: {
+      fill: "#000000",
+      outlineWidth: 2,
+      outlineColor: "#ffffff",
+      outlineOpacity: 1,
+    },
+  },
+  tooltip: {
+    container: {
+      background: "#ffffff",
+      fontSize: 12,
+    },
+    basic: {},
+    chip: {},
+    table: {},
+    tableCell: {},
+    tableCellValue: {},
+  },
+};
+
 const BarChart = () => (
   <ResponsiveBarChart
     data={data}
+    theme={theme}
     keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
     indexBy="country"
     margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
