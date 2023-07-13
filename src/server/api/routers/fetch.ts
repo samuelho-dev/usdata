@@ -1,5 +1,6 @@
 import { number, z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { LineDataSchema } from "~/types/schema";
 
 export const fetchRouter = createTRPCRouter({
   fetchStates: publicProcedure.query(async ({ ctx }) => {
@@ -159,24 +160,127 @@ export const fetchRouter = createTRPCRouter({
       });
 
       // [{
-      //     id: "japan",
+      //     state: "CA",
       //     color: "hsl(275, 70%, 50%)",
       //     data: [
       //       {
-      //         x: "plane",
-      //         y: 145,
+      //         x: 2005,
+      //         y: 343253,
       //       },
       //     ],
       //   },];
-      console.log({ data });
+      type StateDataMap = {
+        [key: string]: {
+          id: string;
+          data: Array<{
+            x: number;
+            y: number;
+          }>;
+        };
+      };
+      const stateDataMap: StateDataMap = {};
 
-      const test = data.map((el) => {
-        const dataArray = el.data.map((dataEl) => {
-          dataEl.x : el.year,
-          dataEl.y : dataEl.data
-        })
-      })
+      data.forEach((el) => {
+        // Init obj
+        if (!stateDataMap[el.state]) {
+          stateDataMap[el.state] = {
+            id: el.state,
+            data: [],
+          };
+        }
 
-      return data;
+        // normalize data and format
+        stateDataMap[el.state]?.data.push(
+          ...el.data.map((dataEl) => {
+            return {
+              x: el.year,
+              y: Number((dataEl.data / 1000000).toFixed(2)),
+            };
+          })
+        );
+      });
+
+      const uniqueStateData = Object.values(stateDataMap);
+
+      // console.log({ uniqueStateData });
+
+      return uniqueStateData;
+    }),
+  fetchBarData: publicProcedure
+    .input(z.array(z.object({ id: z.string() })))
+    .mutation(async ({ ctx, input }) => {
+      type Check = {
+        [key: string]: string;
+      };
+
+      const check: Check = {
+        B01003_001E: `Total Population`,
+        B16001_002E: `Only English`,
+        B16001_003E: `Spanish`,
+        B16001_006E: `Other Indo-European Languages`,
+        B16001_009E: `Asian and Pacific Island Languages`,
+        B16001_012E: `Other Languages`,
+      };
+
+      const data = await ctx.prisma.censusModel.findMany({
+        where: {
+          id: {
+            in: input.map((el) => el.id),
+          },
+        },
+        select: {
+          state: true,
+          data: {
+            where: {
+              key: {
+                in: [
+                  "B01003_001E",
+                  "B16001_002E",
+                  "B16001_003E",
+                  "B16001_006E",
+                  "B16001_009E",
+                  "B16001_012E",
+                ],
+              },
+            },
+            select: {
+              key: true,
+              data: true,
+            },
+          },
+        },
+      });
+      // console.log({ data });
+
+      const normalizedData = data.map((el) => {
+        const totalPopulationData = el.data.find(
+          (dataEl) => dataEl.key === "B01003_001E"
+        );
+        const totalPopulation = totalPopulationData
+          ? totalPopulationData.data
+          : 1;
+        const lineData = el.data.reduce((acc, dataEl) => {
+          if (dataEl.key !== "B01003_001E") {
+            console.log({ totalPopulation, data: dataEl.data });
+            acc[check[dataEl.key]] = (
+              (dataEl.data / totalPopulation) *
+              100
+            ).toFixed(2);
+          }
+          return acc;
+        }, {});
+
+        return { state: el.state, ...lineData };
+      });
+
+      console.log(normalizedData);
+
+      // [{
+      //   state: "AD",
+      //   "B16001_002E": 23,
+      //   "B16001_003E": 23,
+      //   "B16001_006E": 23,
+      // },]
+      return normalizedData;
     }),
 });
