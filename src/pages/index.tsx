@@ -5,7 +5,11 @@ import Graph from "~/components/Graph";
 import LineChart from "~/components/Line";
 import RadarChart from "~/components/Radar";
 
-import { type RadarDataSchema } from "~/types/schema";
+import {
+  type BarDataSchema,
+  type LineDataSchema,
+  type RadarDataSchema,
+} from "~/types/schema";
 import { api } from "~/utils/api";
 
 export default function Home() {
@@ -13,6 +17,7 @@ export default function Home() {
   const datasetMutation = api.fetch.fetchDatasetsByYear.useMutation();
   const radarDataMutation = api.fetch.fetchRadarData.useMutation();
   const lineDataMutation = api.fetch.fetchLineData.useMutation();
+  const barDataMutation = api.fetch.fetchBarData.useMutation();
 
   const [selectedDate, setSelectedDate] = useState(2005);
   const [selectedStates, setSelectedStates] = useState<
@@ -20,7 +25,8 @@ export default function Home() {
   >([]);
 
   const [radarData, setRadarData] = useState<RadarDataSchema[] | null>(null);
-  const [lineData, setLineData] = useState<RadarDataSchema[] | null>(null);
+  const [lineData, setLineData] = useState<LineDataSchema[] | null>(null);
+  const [barData, setBarData] = useState<BarDataSchema[] | null>(null);
 
   const handleStateSelection = (FIPS: string, state: string) => {
     setSelectedStates((prevState) => {
@@ -38,17 +44,22 @@ export default function Home() {
   };
 
   const handleDataMutation = async () => {
+    // Grab the associated models related to the states & year
     const dataModels = await datasetMutation.mutateAsync({
       year: selectedDate,
       ids: selectedStates.map((state) => state.FIPS),
     });
     console.log(dataModels, "Models");
     const radarQueryData = await radarDataMutation.mutateAsync(dataModels);
+    setRadarData(radarQueryData);
+
     const lineQueryData = await lineDataMutation.mutateAsync(
       selectedStates.map((el) => el.FIPS)
     );
-    console.log({ lineQueryData });
-    setRadarData(radarQueryData);
+    setLineData(lineQueryData);
+
+    const barQueryData = await barDataMutation.mutateAsync(dataModels);
+    setBarData(barQueryData);
   };
 
   return (
@@ -102,10 +113,10 @@ export default function Home() {
             {radarData && <RadarChart data={radarData} />}
           </div>
           <div className="h-80">
-            {/* {lineData && <LineChart data={lineData} />} */}
+            {lineData && <LineChart data={lineData} />}
           </div>
-          <div className="h-80">
-            <BarChart />
+          <div className="col-span-2 h-80">
+            {barData && <BarChart data={barData} />}
           </div>
         </div>
       </div>
