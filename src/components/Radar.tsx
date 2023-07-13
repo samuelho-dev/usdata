@@ -1,10 +1,12 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import { type RadarDataSchema } from "~/types/schema";
 
 const ResponsiveRadarChart = dynamic(
   () => import("@nivo/radar").then((m) => m.ResponsiveRadar),
   { ssr: false }
 );
+
 const theme = {
   text: {
     fontSize: 11,
@@ -113,7 +115,11 @@ const theme = {
   },
 };
 
-const RadarChart = ({ data, keys }) => (
+interface RadarChartComponentSchema {
+  data: RadarDataSchema[];
+}
+
+const RadarChart = ({ data }: RadarChartComponentSchema) => (
   <ResponsiveRadarChart
     data={data}
     theme={theme}

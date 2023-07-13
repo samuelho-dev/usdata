@@ -1,5 +1,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import { type BarDataSchema } from "~/types/schema";
 
 const ResponsiveBarChart = dynamic(
   () => import("@nivo/bar").then((m) => m.ResponsiveBar),
@@ -114,7 +115,11 @@ const theme = {
   },
 };
 
-const BarChart = ({ data }) => (
+interface BarChartComponentSchema {
+  data: BarDataSchema[];
+}
+
+const BarChart = ({ data }: BarChartComponentSchema) => (
   <ResponsiveBarChart
     data={data}
     theme={theme}
@@ -192,13 +197,13 @@ const BarChart = ({ data }) => (
     labelSkipWidth={12}
     labelSkipHeight={12}
     labelTextColor={{
-      from: "color",
-      modifiers: [["darker", 1.6]],
+      from: "theme",
+      theme: "background",
     }}
     legends={[
       {
         dataFrom: "keys",
-        anchor: "top-right",
+        anchor: "bottom-right",
         direction: "column",
         justify: false,
         translateX: 250,
