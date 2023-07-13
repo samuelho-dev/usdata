@@ -72,7 +72,7 @@ const censusKeyObj = {
   B16001_006E: "speak_other_indo_european_languages_at_home",
   B16001_009E: "speak_asian_and_pacific_island_languages_at_home",
   B16001_012E: "speak_other_languages_at_home",
-  B05002_001E: "total_population_b05002",
+  B05002_001E: "total_population",
   B05002_002E: "native_born",
   B05002_013E: "foreign_born",
   B05002_014E: "foreign_born_naturalized_us_citizen",
@@ -102,9 +102,9 @@ async function createCensusData(
         census_model: {
           connectOrCreate: {
             where: {
-              year_state: {
+              year_FIPS: {
                 year: year,
-                state: state,
+                FIPS: FIPS,
               },
             },
             create: {
@@ -164,9 +164,9 @@ async function fetchCensus(year: number) {
               census_model: {
                 connectOrCreate: {
                   where: {
-                    year_state: {
+                    year_FIPS: {
                       year: year,
-                      state: el.abbr,
+                      FIPS: el.FIPS,
                     },
                   },
                   create: {
