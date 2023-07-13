@@ -27,7 +27,25 @@ export const RadarDataSchema = z
   })
   .catchall(z.number().nullable());
 
+export const LineDataSchema = z.object({
+  id: z.string(),
+  data: z.array(
+    z.object({
+      x: z.number(),
+      y: z.number(),
+    })
+  ),
+});
+
+export const BarDataSchema = z
+  .object({
+    state: z.string(),
+  })
+  .catchall(z.number().nullable());
+
 export type CensusKeySchema = z.infer<typeof CensusKeySchema>;
 export type CensusDataSchema = z.infer<typeof CensusDataSchema>;
 export type CensusModelSchema = z.infer<typeof CensusModelSchema>;
 export type RadarDataSchema = z.infer<typeof RadarDataSchema>;
+export type LineDataSchema = z.infer<typeof LineDataSchema>;
+export type BarDataSchema = z.infer<typeof BarDataSchema>;
