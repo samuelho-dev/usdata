@@ -37,10 +37,6 @@ export default function Home() {
     });
   };
 
-  const handleDate = (i: number) => {
-    setSelectedDate(2005 + i);
-  };
-
   const handleDataMutation = async () => {
     // Grab the associated models related to the states & year
     const dataModels = await datasetMutation.mutateAsync({
@@ -71,9 +67,10 @@ export default function Home() {
           <div className="flex w-full justify-center gap-4">
             {Array.from({ length: 2010 - 2005 + 1 }, (_, i) => (
               <button
-                onClick={() => handleDate(i)}
-                className={`rounded-lg bg-white px-1 hover:cursor-pointer hover:bg-[hsl(280,100%,70%)] ${
-                  2005 + i === selectedDate ? "bg-[hsl(280,100%,70%)]" : ""
+                type="button"
+                onClick={() => setSelectedDate(2005 + i)}
+                className={`rounded-lg  px-1 hover:cursor-pointer hover:bg-[hsl(280,100%,70%)] ${
+                  2005 + i === selectedDate ? "bg-purple-400" : "bg-white"
                 }`}
                 key={2005 + i}
               >
@@ -88,12 +85,12 @@ export default function Home() {
                 onClick={() =>
                   void handleStateSelection(dataset.FIPS, dataset.state)
                 }
-                className={`rounded-lg bg-white px-2 hover:cursor-pointer hover:bg-[hsl(280,100%,70%)] ${
+                className={`rounded-lg  px-2 hover:cursor-pointer hover:bg-[hsl(280,100%,70%)] ${
                   selectedStates
                     .map((state) => state.FIPS)
                     .includes(dataset.FIPS)
-                    ? "bg-[hsl(280,100%,70%)]"
-                    : ""
+                    ? "bg-purple-400"
+                    : "bg-white"
                 }`}
               >
                 {dataset.state}
