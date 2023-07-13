@@ -1,7 +1,5 @@
-import { CensusData } from "@prisma/client";
 import { useState } from "react";
 import BarChart from "~/components/Bar";
-import Graph from "~/components/Graph";
 import LineChart from "~/components/Line";
 import RadarChart from "~/components/Radar";
 
@@ -49,6 +47,7 @@ export default function Home() {
       year: selectedDate,
       ids: selectedStates.map((state) => state.FIPS),
     });
+
     console.log(dataModels, "Models");
     const radarQueryData = await radarDataMutation.mutateAsync(dataModels);
     setRadarData(radarQueryData);
@@ -71,7 +70,7 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           <div className="flex w-full justify-center gap-4">
             {Array.from({ length: 2010 - 2005 + 1 }, (_, i) => (
-              <div
+              <button
                 onClick={() => handleDate(i)}
                 className={`rounded-lg bg-white px-1 hover:cursor-pointer hover:bg-[hsl(280,100%,70%)] ${
                   2005 + i === selectedDate ? "bg-[hsl(280,100%,70%)]" : ""
@@ -79,12 +78,12 @@ export default function Home() {
                 key={2005 + i}
               >
                 {2005 + i}
-              </div>
+              </button>
             ))}
           </div>
           <div className="flex flex-wrap gap-2">
             {statesQuery.data?.map((dataset) => (
-              <div
+              <button
                 key={dataset.FIPS}
                 onClick={() =>
                   void handleStateSelection(dataset.FIPS, dataset.state)
@@ -98,7 +97,7 @@ export default function Home() {
                 }`}
               >
                 {dataset.state}
-              </div>
+              </button>
             ))}
           </div>
           <button
