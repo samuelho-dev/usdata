@@ -113,16 +113,22 @@ const theme = {
   },
 };
 
-const RadarChart = ({ data }) => (
+const RadarChart = ({ data, keys }) => (
   <ResponsiveRadarChart
     data={data}
     theme={theme}
-    keys={["chardonay", "carmenere", "syrah"]}
-    indexBy="taste"
+    keys={[
+      ...new Set(
+        data.flatMap((el) =>
+          Object.keys(el).filter((key) => key !== "key" && key !== "max")
+        )
+      ),
+    ]}
+    indexBy="key"
     valueFormat=">-.2f"
     margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
     borderColor={{ from: "color" }}
-    gridLabelOffset={36}
+    gridLabelOffset={30}
     dotSize={10}
     dotColor={{ theme: "background" }}
     dotBorderWidth={2}
