@@ -278,6 +278,7 @@ const ResponsiveLineChart = dynamic(
   () => import("@nivo/line").then((m) => m.ResponsiveLine),
   { ssr: false }
 );
+
 const theme = {
   text: {
     fontSize: 11,
@@ -385,19 +386,20 @@ const theme = {
     tableCellValue: {},
   },
 };
-const LineChart = () => (
+
+const LineChart = ({ data }) => (
   <ResponsiveLineChart
     data={data}
+    theme={theme}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
     xScale={{ type: "point" }}
     yScale={{
       type: "linear",
       min: "auto",
       max: "auto",
-      stacked: true,
+      stacked: false,
       reverse: false,
     }}
-    theme={theme}
     yFormat=" >-.2f"
     axisTop={null}
     axisRight={null}
@@ -405,7 +407,7 @@ const LineChart = () => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "transportation",
+      legend: "years",
       legendOffset: 36,
       legendPosition: "middle",
     }}
@@ -413,8 +415,8 @@ const LineChart = () => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "count",
-      legendOffset: -40,
+      legend: "Total Housing Units (1,000,000)s",
+      legendOffset: -50,
       legendPosition: "middle",
     }}
     pointSize={10}
