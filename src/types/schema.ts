@@ -21,6 +21,13 @@ export const CensusModelSchema = z.object({
   created_at: z.date(),
 });
 
+export const RadarDataSchema = z
+  .object({
+    key: z.string(),
+  })
+  .catchall(z.number().nullable());
+
 export type CensusKeySchema = z.infer<typeof CensusKeySchema>;
 export type CensusDataSchema = z.infer<typeof CensusDataSchema>;
 export type CensusModelSchema = z.infer<typeof CensusModelSchema>;
+export type RadarDataSchema = z.infer<typeof RadarDataSchema>;
