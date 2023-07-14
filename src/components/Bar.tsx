@@ -182,7 +182,7 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "country",
+      legend: "states",
       legendPosition: "middle",
       legendOffset: 32,
     }}
@@ -196,17 +196,14 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
     }}
     labelSkipWidth={12}
     labelSkipHeight={12}
-    labelTextColor={{
-      from: "theme",
-      theme: "background",
-    }}
+    labelTextColor={"inherit"}
     legends={[
       {
         dataFrom: "keys",
-        anchor: "bottom-right",
+        anchor: "top-right",
         direction: "column",
         justify: false,
-        translateX: 250,
+        translateX: 200,
         translateY: 0,
         itemsSpacing: 2,
         itemWidth: 300,
