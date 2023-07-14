@@ -1,6 +1,5 @@
-import { number, z } from "zod";
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { LineDataSchema } from "~/types/schema";
 
 export const fetchRouter = createTRPCRouter({
   fetchStates: publicProcedure.query(async ({ ctx }) => {
@@ -44,9 +43,9 @@ export const fetchRouter = createTRPCRouter({
       };
 
       const check: Check = {
-        B19301_001E: `Per Capita Income in the Past 12 Months (in inflation-adjusted dollars)`,
+        B19013_001E: `Past Year Median Household Income (inflation-adjusted)`,
         B25003_002E: `Owner Occupied Housing Units`,
-        B23025_005E: `Unemployment Rate`,
+        B25064_001E: `Median Gross Rent (Dollars)`,
         B15003_022E: `Bachelor's Degree or Higher`,
       };
 
@@ -102,8 +101,9 @@ export const fetchRouter = createTRPCRouter({
         (obj[item.key] as StateData)[item.census_model.state] = value;
 
         // Update max value if current value is larger
-        if (value > obj[item.key].max) {
-          obj[item.key].max = value;
+
+        if (value > (obj[item.key] as DataObject).max) {
+          (obj[item.key] as DataObject).max = value;
         }
       }
 
@@ -119,7 +119,7 @@ export const fetchRouter = createTRPCRouter({
         };
         for (const key in el) {
           if (key !== "key" && key !== "max" && el[key] !== 0) {
-            normalizedEl[key] = Number((el[key] / el.max) * 100);
+            normalizedEl[key] = (Number(el[key]) / el.max) * 100;
           } else {
             normalizedEl[key] = el[key];
           }
@@ -194,7 +194,7 @@ export const fetchRouter = createTRPCRouter({
           ...el.data.map((dataEl) => {
             return {
               x: el.year,
-              y: Number((dataEl.data / 1000000).toFixed(2)),
+              y: Number((Number(dataEl.data) / 1000000).toFixed(2)),
             };
           })
         );
@@ -256,16 +256,26 @@ export const fetchRouter = createTRPCRouter({
         const totalPopulationData = el.data.find(
           (dataEl) => dataEl.key === "B01003_001E"
         );
+
+        // Need to account for errors/gaps in data
+        // Use average population in each state if doesnt exist
         const totalPopulation = totalPopulationData
           ? totalPopulationData.data
-          : 1;
-        const lineData = el.data.reduce((acc, dataEl) => {
+          : 5763868;
+
+        type LanguageData = {
+          [language: string]: string | null;
+        };
+
+        const lineData = el.data.reduce<LanguageData>((acc, dataEl) => {
           if (dataEl.key !== "B01003_001E") {
-            console.log({ totalPopulation, data: dataEl.data });
-            acc[check[dataEl.key]] = (
-              (dataEl.data / totalPopulation) *
-              100
-            ).toFixed(2);
+            const keyName = check[dataEl.key];
+            if (keyName) {
+              acc[keyName] = (
+                (Number(dataEl.data) / Number(totalPopulation)) *
+                100
+              ).toFixed(2);
+            }
           }
           return acc;
         }, {});
@@ -273,7 +283,7 @@ export const fetchRouter = createTRPCRouter({
         return { state: el.state, ...lineData };
       });
 
-      console.log(normalizedData);
+      // console.log(normalizedData);
 
       // [{
       //   state: "AD",
