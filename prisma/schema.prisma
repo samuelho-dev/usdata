@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -35,6 +35,27 @@ model CensusModel {
   FIPS       String
   data       CensusData[]
   created_at DateTime     @default(now())
+
+  @@unique([year, FIPS])
+}
+
+model FredData {
+  id         Int       @id @default(autoincrement())
+  data       Int?
+  fred_model FredModel @relation(fields: [fred_id], references: [id])
+  key        String
+  fred_id    String
+
+  @@index([fred_id])
+}
+
+model FredModel {
+  id         String     @id @default(cuid())
+  year       Int
+  state      String
+  FIPS       String
+  data       FredData[]
+  created_at DateTime   @default(now())
 
   @@unique([year, FIPS])
 }
