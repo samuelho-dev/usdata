@@ -12,7 +12,6 @@ export const fetchRouter = createTRPCRouter({
       },
       distinct: ["FIPS"],
     });
-
     return data;
   }),
   fetchDatasetsByYear: publicProcedure
@@ -36,7 +35,6 @@ export const fetchRouter = createTRPCRouter({
     }),
   fetchRadarData: publicProcedure
     .input(z.array(z.object({ id: z.string() })))
-
     .mutation(async ({ ctx, input }) => {
       type Check = {
         [key: string]: string;
@@ -73,7 +71,7 @@ export const fetchRouter = createTRPCRouter({
       });
 
       // console.log({ data, length: data.length }, "RADAR DATA");
-      // const dataDemo = {
+      // {
       //   Data: [
       //     { id: 169, key: "B15003_022E", data: null, census_model: [Object] },
       //     { id: 182, key: "B23025_005E", data: null, census_model: [Object] },
@@ -292,5 +290,47 @@ export const fetchRouter = createTRPCRouter({
       //   "B16001_006E": 23,
       // },]
       return normalizedData;
+    }),
+  fetchBumpData: publicProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.prisma.fredModel.findMany({
+        where: {
+          FIPS: {
+            in: input,
+          },
+        },
+        select: {
+          state: true,
+          year: true,
+          data: {
+            select: {
+              data: true,
+            },
+          },
+        },
+      });
+      // [
+      //   {
+      //     id: "Serie 1",
+      //     data: [
+      //       {
+      //         x: 2000,
+      //         y: 1,
+      //       },
+      //     ],
+      //   },
+      // ];
+      const test = data.map((el) => {
+        return {
+          id: el.state,
+          data: el.data.map((dataEl) => {
+            return { x: el.year, y: dataEl.data };
+          }),
+        };
+      });
+
+      // console.log(test);
+      return test;
     }),
 });
