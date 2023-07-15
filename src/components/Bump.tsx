@@ -118,11 +118,11 @@ const theme = {
 interface BumpChartComponentSchema {
   data: BumpDataSchema[];
 }
+
 //{ data }: BumpChartComponentSchema
 const BumpChart = ({ data }: BumpChartComponentSchema) => (
   <ResponsiveBumpChart
     data={data}
-    theme={theme}
     colors={{ scheme: "spectral" }}
     lineWidth={3}
     activeLineWidth={6}
@@ -135,14 +135,8 @@ const BumpChart = ({ data }: BumpChartComponentSchema) => (
     pointBorderWidth={3}
     activePointBorderWidth={3}
     pointBorderColor={{ from: "serie.color" }}
-    axisTop={{
-      tickSize: 5,
-      tickPadding: 5,
-      tickRotation: 0,
-      legend: "",
-      legendPosition: "middle",
-      legendOffset: -36,
-    }}
+    enableGridX={false}
+    axisTop={null}
     axisBottom={{
       tickSize: 5,
       tickPadding: 5,
