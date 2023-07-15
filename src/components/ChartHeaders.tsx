@@ -11,7 +11,8 @@ function ChartHeaders({ variables }: { variables: ChartHeadersInterface }) {
         <h5 className="text-lg text-white">Variables Used</h5>
         {Object.keys(variables).map((chartVar, i) => (
           <p className="text-sm text-white" key={i}>
-            {`${chartVar} : ${variables[chartVar] as string}`}
+            <span className="text-[#FE704E]">{chartVar}</span>
+            {` : ${variables[chartVar] as string}`}
           </p>
         ))}
       </div>
