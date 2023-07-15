@@ -145,7 +145,7 @@ async function fetchCensus(year: number) {
         );
 
         const values = response.data as string[][];
-        console.log(values, "Values");
+
         await createCensusData(
           values[1] as string[],
           year,
@@ -159,6 +159,7 @@ async function fetchCensus(year: number) {
         );
 
         try {
+          // CREATE A NULL ENTRY IF FAILED
           await prisma.censusData.create({
             data: {
               census_model: {
@@ -193,6 +194,122 @@ async function fetchCensus(year: number) {
   }
 }
 
+async function fredDataScrape() {
+  // {
+  //   "realtime_start": "2013-08-14",
+  //   "realtime_end": "2013-08-14",
+  //   "observation_start": "1776-07-04",
+  //   "observation_end": "9999-12-31",
+  //   "units": "lin",
+  //   "output_type": 1,
+  //   "file_type": "json",
+  //   "order_by": "observation_date",
+  //   "sort_order": "asc",
+  //   "count": 84,
+  //   "offset": 0,
+  //   "limit": 100000,
+  //   "observations": [
+  //       {
+  //           "realtime_start": "2013-08-14",
+  //           "realtime_end": "2013-08-14",
+  //           "date": "1929-01-01",
+  //           "value": "1065.9"
+  //       },]
+  // }
+
+  for (const el of statesKey) {
+    const series_id = `${el.abbr}STHPI`;
+    try {
+      console.log(
+        `https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${
+          env.FRED_API_KEY as string
+        }&file_type=json`
+      );
+      const response = await axios.get(
+        `https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${
+          env.FRED_API_KEY as string
+        }&file_type=json`
+      );
+      type dataArraySchema = {
+        realtime_start: string;
+        realtime_end: string;
+        date: string;
+        value: string;
+      };
+
+      type responseSchema = {
+        realtime_start: string;
+        realtime_end: string;
+        observation_start: string;
+        observation_end: string;
+        units: string;
+        output_type: number;
+        file_type: string;
+        order_by: string;
+        sort_order: string;
+        count: number;
+        offset: number;
+        limit: number;
+        observations: dataArraySchema[];
+      };
+
+      const dataArray = (response.data as responseSchema).observations;
+
+      for (const data of dataArray) {
+        try {
+          await prisma.fredData.create({
+            data: {
+              data: Number(data.value),
+              key: series_id,
+              fred_model: {
+                connectOrCreate: {
+                  where: {
+                    year_FIPS: {
+                      year: Number(data.date.slice(0, 4)),
+                      FIPS: el.FIPS,
+                    },
+                  },
+                  create: {
+                    year: Number(data.date.slice(0, 4)),
+                    state: el.abbr,
+                    FIPS: el.FIPS,
+                  },
+                },
+              },
+            },
+          });
+        } catch (err) {
+          await prisma.fredData.create({
+            data: {
+              data: null,
+              key: series_id,
+              fred_model: {
+                connectOrCreate: {
+                  where: {
+                    year_FIPS: {
+                      year: Number(data.date.slice(4)),
+                      FIPS: el.FIPS,
+                    },
+                  },
+                  create: {
+                    year: Number(data.date.slice(4)),
+                    state: el.abbr,
+                    FIPS: el.FIPS,
+                  },
+                },
+              },
+            },
+          });
+          console.error(err);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+}
+
 async function censusKeySeed() {
   for (const [censusKey, description] of Object.entries(censusKeyObj)) {
     await prisma.censusKey.create({
@@ -207,6 +324,7 @@ async function censusKeySeed() {
 async function seed() {
   try {
     await censusKeySeed();
+    await fredDataScrape();
     for (let i = 2005; i <= 2010; i++) {
       await fetchCensus(i);
     }
