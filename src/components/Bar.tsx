@@ -182,7 +182,7 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "states",
+      legend: "States",
       legendPosition: "middle",
       legendOffset: 32,
     }}

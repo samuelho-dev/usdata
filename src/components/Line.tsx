@@ -139,7 +139,7 @@ const LineChart = ({ data }: LineChartComponentSchema) => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "years",
+      legend: "Years",
       legendOffset: 36,
       legendPosition: "middle",
     }}
@@ -147,7 +147,7 @@ const LineChart = ({ data }: LineChartComponentSchema) => (
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "Total Housing Units (1,000,000)s",
+      legend: "Total Housing Units (MM)",
       legendOffset: -50,
       legendPosition: "middle",
     }}
