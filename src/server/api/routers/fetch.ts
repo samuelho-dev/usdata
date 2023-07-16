@@ -158,7 +158,6 @@ export const fetchRouter = createTRPCRouter({
 
       // [{
       //     state: "CA",
-      //     color: "hsl(275, 70%, 50%)",
       //     data: [
       //       {
       //         x: 2005,
@@ -235,7 +234,7 @@ export const fetchRouter = createTRPCRouter({
         // Need to account for errors/gaps in data
         // Use average population in each state if doesnt exist
         const totalPopulation = totalPopulationData
-          ? totalPopulationData.data
+          ? Number(totalPopulationData.data)
           : 5763868;
 
         type LanguageData = {
