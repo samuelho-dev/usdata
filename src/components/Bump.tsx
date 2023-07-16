@@ -123,12 +123,15 @@ interface BumpChartComponentSchema {
 const BumpChart = ({ data }: BumpChartComponentSchema) => (
   <ResponsiveBumpChart
     data={data}
-    colors={{ scheme: "spectral" }}
+    theme={theme}
+    interpolation="linear"
+    colors={{ scheme: "green_blue" }}
+    xPadding={0.25}
     lineWidth={3}
     activeLineWidth={6}
     inactiveLineWidth={3}
     inactiveOpacity={0.15}
-    pointSize={10}
+    pointSize={3}
     activePointSize={16}
     inactivePointSize={0}
     pointColor={{ theme: "background" }}
@@ -138,18 +141,18 @@ const BumpChart = ({ data }: BumpChartComponentSchema) => (
     enableGridX={false}
     axisTop={null}
     axisBottom={{
-      tickSize: 5,
+      tickSize: 4,
       tickPadding: 5,
-      tickRotation: 0,
-      legend: "",
+      tickRotation: 50,
+      legend: "Years",
       legendPosition: "middle",
-      legendOffset: 32,
+      legendOffset: 36,
     }}
     axisLeft={{
       tickSize: 5,
       tickPadding: 5,
       tickRotation: 0,
-      legend: "ranking",
+      legend: "Ranking",
       legendPosition: "middle",
       legendOffset: -40,
     }}
