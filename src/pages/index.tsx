@@ -81,7 +81,10 @@ export default function Home() {
     <main className="flex h-full min-h-screen w-full items-center justify-center overflow-y-scroll bg-gradient-to-b from-[#0A145A] to-[#0c0c19]">
       <div className="flex h-full max-w-3xl flex-col items-center justify-center gap-12 py-16 ">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Census <span className="text-[#2638C4]">Data</span> App
+          Data{" "}
+          <span className="bg-gradient-to-b from-[#dd1f1f] to-[#f73e3e] bg-clip-text text-transparent">
+            USA
+          </span>
         </h1>
         <div className="flex flex-col gap-4">
           <div className="flex w-full justify-center gap-4">
@@ -142,6 +145,7 @@ export default function Home() {
           ) : (
             <button
               className="w-fit rounded-md bg-[#FE704E] px-4 font-semibold"
+              disabled={statesQuery.data ? false : true}
               onClick={() => void handleDataMutation()}
             >
               Go
@@ -152,6 +156,20 @@ export default function Home() {
         <div
           className={`flex w-full flex-col items-center justify-center gap-20`}
         >
+          {lineData && (
+            <div className="flex h-full w-full flex-col">
+              <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
+                Total Housing Units Over Time
+              </h2>
+              <div className="h-96">
+                <LineChart data={lineData} />
+              </div>
+              <p className="text-md py-4 tracking-tight text-white ">
+                Growth of total housing units over time.
+              </p>
+              <ChartHeaders variables={lineVariables} />
+            </div>
+          )}
           {radarData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
@@ -168,21 +186,6 @@ export default function Home() {
               <ChartHeaders variables={radarVariables} />
             </div>
           )}
-          {lineData && (
-            <div className="flex h-full w-full flex-col">
-              <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
-                Total Housing Units Over Time
-              </h2>
-              <div className="h-96">
-                <LineChart data={lineData} />
-              </div>
-              <p className="text-md py-4 tracking-tight text-white ">
-                Growth of total housing units over time.
-              </p>
-              <ChartHeaders variables={lineVariables} />
-            </div>
-          )}
-
           {bumpData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
@@ -193,16 +196,16 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-md py-4 tracking-tight text-white ">
-                  Lower HPI (Higher ranking) indicates a slower rate in
-                  increasing housing prices, resulting in more affordable
-                  housing. Higher HPI may be more desireable to investors due to
-                  the appreciation of housing value.
+                  Higher HPI (Higher ranking) may be more desireable to
+                  investors due to the appreciation of housing value. Lower HPI
+                  indicates a slower rate in increasing housing prices,
+                  resulting in more affordable housing.
                 </p>
                 <h5 className="text-lg text-white">
                   Variables Used - Fred Economic Data
                 </h5>
-                <p className="text-md text-white">
-                  <span className="text-[#FE704E]">STPHPI</span> :
+                <p className="text-sm text-white">
+                  <span className="text-sm text-[#FE704E]">STPHPI</span> :
                   All-Transactions House Price Index
                 </p>
               </div>
