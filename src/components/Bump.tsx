@@ -35,7 +35,7 @@ const theme = {
         strokeWidth: 1,
       },
       text: {
-        fontSize: 11,
+        fontSize: 10,
         fill: "#ffffff",
         outlineWidth: 0,
         outlineColor: "transparent",
@@ -141,7 +141,7 @@ const BumpChart = ({ data }: BumpChartComponentSchema) => (
     enableGridX={false}
     axisTop={null}
     axisBottom={{
-      tickSize: 4,
+      tickSize: 5,
       tickPadding: 5,
       tickRotation: 50,
       legend: "Years",

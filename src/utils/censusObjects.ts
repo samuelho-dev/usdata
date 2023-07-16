@@ -3,7 +3,7 @@ type Variables = {
 };
 
 export const radarVariables: Variables = {
-  B19013_001E: `Adjusted Past Year Median Household Income`,
+  B19013_001E: `Adj Yearly Median Household Income`,
   B25003_002E: `Owner Occupied Housing Units`,
   B25064_001E: `Median Gross Rent`,
   B15003_022E: `Bachelor's Degree or Higher`,

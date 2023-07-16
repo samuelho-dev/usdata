@@ -25,7 +25,7 @@ const theme = {
       text: {
         fontSize: 12,
         fill: "#ffffff",
-        outlineWidth: 0,
+        outlineWidth: 1,
         outlineColor: "transparent",
       },
     },
@@ -126,15 +126,16 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
     keys={[
       "Only English",
       "Spanish",
-      "Other Indo-European Languages",
-      "Asian and Pacific Island Languages",
-      "Other Languages",
+      "Other Indo-European",
+      "Asian and Pacific Island",
+      "Other",
     ]}
     enableGridY={false}
+    enableLabel={false}
     indexBy="state"
     groupMode="grouped"
     margin={{ top: 50, right: 100, bottom: 50, left: 100 }}
-    padding={0.3}
+    padding={0.2}
     valueScale={{ type: "symlog" }}
     indexScale={{ type: "band", round: true }}
     colors={{ scheme: "nivo" }}
@@ -156,20 +157,6 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
         rotation: -45,
         lineWidth: 6,
         spacing: 10,
-      },
-    ]}
-    fill={[
-      {
-        match: {
-          id: "fries",
-        },
-        id: "dots",
-      },
-      {
-        match: {
-          id: "sandwich",
-        },
-        id: "lines",
       },
     ]}
     borderColor={{
@@ -203,7 +190,7 @@ const BarChart = ({ data }: BarChartComponentSchema) => (
         anchor: "top-right",
         direction: "column",
         justify: false,
-        translateX: 200,
+        translateX: 250,
         translateY: 0,
         itemsSpacing: 2,
         itemWidth: 300,

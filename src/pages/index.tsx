@@ -55,10 +55,9 @@ export default function Home() {
     // Grab the associated models related to the states & year for Census Data
     const dataModels = await datasetMutation.mutateAsync({
       year: selectedDate,
-      ids: selectedStates.map((state) => state.FIPS),
+      ids: selectedStates.map((el) => el.FIPS),
     });
 
-    console.log(dataModels, "Models");
     const radarQueryData = await radarDataMutation.mutateAsync(dataModels);
     setRadarData(radarQueryData);
 
@@ -80,7 +79,7 @@ export default function Home() {
 
   return (
     <main className="flex h-full min-h-screen w-full items-center justify-center overflow-y-scroll bg-gradient-to-b from-[#0A145A] to-[#0c0c19]">
-      <div className="flex h-full max-w-4xl flex-col items-center justify-center gap-12 px-4 py-16 ">
+      <div className="flex h-full max-w-3xl flex-col items-center justify-center gap-12 py-16 ">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Census <span className="text-[#2638C4]">Data</span> App
         </h1>
@@ -142,28 +141,31 @@ export default function Home() {
             </div>
           ) : (
             <button
-              className="w-fit rounded-md bg-[#FE704E] px-4 "
+              className="w-fit rounded-md bg-[#FE704E] px-4 font-semibold"
               onClick={() => void handleDataMutation()}
             >
               Go
             </button>
           )}
         </div>
-        <div className="flex w-full flex-col items-center justify-center gap-20">
+
+        <div
+          className={`flex w-full flex-col items-center justify-center gap-20`}
+        >
           {radarData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
-                State Comparasion (Education - Income - Cost of Rent - Home
-                Ownership)
+                Relative State Comparasion (Education - Income - Cost of Rent -
+                Home Ownership)
               </h2>
               <div className="h-96">
                 <RadarChart data={radarData} />
               </div>
-              <ChartHeaders variables={radarVariables} />
-              <p className="text-sm tracking-tighter text-white">
-                Comparasion of important KPIs per each state, dataset has been
+              <p className="text-md py-4 tracking-tight text-white ">
+                Comparasion of important KPIs for each state, dataset has been
                 normalized in comparasion to the max value of each variable.
               </p>
+              <ChartHeaders variables={radarVariables} />
             </div>
           )}
           {lineData && (
@@ -174,33 +176,34 @@ export default function Home() {
               <div className="h-96">
                 <LineChart data={lineData} />
               </div>
-              <ChartHeaders variables={lineVariables} />
-              <p className="text-sm tracking-tighter text-white">
+              <p className="text-md py-4 tracking-tight text-white ">
                 Growth of total housing units over time.
               </p>
+              <ChartHeaders variables={lineVariables} />
             </div>
           )}
 
           {bumpData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
-                Ranked By Housing Price Index (ASC) (1975 - 2023)
+                Ranked By Average Housing Price Index (ASC) (1975 - 2023)
               </h2>
               <div className="h-96">
                 <BumpChart data={bumpData} />
               </div>
               <div>
+                <p className="text-md py-4 tracking-tight text-white ">
+                  Lower HPI (Higher ranking) indicates a slower rate in
+                  increasing housing prices, resulting in more affordable
+                  housing. Higher HPI may be more desireable to investors due to
+                  the appreciation of housing value.
+                </p>
                 <h5 className="text-lg text-white">
                   Variables Used - Fred Economic Data
                 </h5>
-                <p className="text-sm text-white">
+                <p className="text-md text-white">
                   <span className="text-[#FE704E]">STPHPI</span> :
                   All-Transactions House Price Index
-                </p>
-                <p className="text-sm tracking-tighter text-white">
-                  Lower HPI indicates a slower rate in increasing housing
-                  prices. Higher HPI maybe more desireable due to the
-                  appreciation of housing value.
                 </p>
               </div>
             </div>
@@ -214,18 +217,19 @@ export default function Home() {
               <div className="h-96">
                 <BarChart data={barData} />
               </div>
-              <ChartHeaders variables={barVariables} />
-              <p className="text-sm tracking-tighter text-white">
-                Diversity of languages spoken at home.
+              <p className="text-md py-4 tracking-tight text-white ">
+                Diversity of languages spoken at home. Normalized based on state
+                population.
               </p>
+              <ChartHeaders variables={barVariables} />
             </div>
           )}
         </div>
 
-        <h5 className="flex w-full justify-end gap-2 text-base tracking-tight text-white">
-          👋 Created by{" "}
+        <h5 className="flex w-full justify-end gap-1 text-base font-thin tracking-tight text-white">
+          👋 Created by
           <a
-            className="text-[#FE704E] underline underline-offset-2"
+            className="font-semibold text-[#FE704E] underline underline-offset-2"
             href="https://samuelho.space"
             target="_blank"
           >
