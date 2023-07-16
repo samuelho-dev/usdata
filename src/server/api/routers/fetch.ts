@@ -131,7 +131,7 @@ export const fetchRouter = createTRPCRouter({
   fetchLineData: publicProcedure
     .input(z.array(z.string()))
     .mutation(async ({ ctx, input }) => {
-      const years = Array.from({ length: 2010 - 2005 + 1 }, (_, i) => 2005 + i);
+      const years = Array.from({ length: 2020 - 2005 + 1 }, (_, i) => 2005 + i);
 
       const data = await ctx.prisma.censusModel.findMany({
         where: {
