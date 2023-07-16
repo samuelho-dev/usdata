@@ -227,13 +227,11 @@ export const fetchRouter = createTRPCRouter({
           },
         },
       });
-      // console.log({ data });
 
       const normalizedData = data.map((el) => {
         const totalPopulationData = el.data.find(
           (dataEl) => dataEl.key === "B01003_001E"
         );
-
         // Need to account for errors/gaps in data
         // Use average population in each state if doesnt exist
         const totalPopulation = totalPopulationData
@@ -248,10 +246,19 @@ export const fetchRouter = createTRPCRouter({
           if (dataEl.key !== "B01003_001E") {
             const keyName = barVariables[dataEl.key];
             if (keyName) {
-              acc[keyName] = (
-                (Number(dataEl.data) / Number(totalPopulation)) *
-                100
-              ).toFixed(2);
+              if (
+                dataEl.data &&
+                totalPopulation &&
+                !isNaN(Number(dataEl.data))
+              ) {
+                acc[keyName] = (
+                  (Number(dataEl.data) / totalPopulation) *
+                  100
+                ).toFixed(2);
+              } else {
+                // Handle case where dataEl.data cannot be converted to a number
+                acc[keyName] = null;
+              }
             }
           }
           return acc;
@@ -364,7 +371,7 @@ export const fetchRouter = createTRPCRouter({
       // ];
 
       const rankedData = formattedData.map((el) => {
-        const sortedArr = el.data.sort((a, b) => a.data - b.data);
+        const sortedArr = el.data.sort((a, b) => a.data - b.data).reverse();
         // Sort the data and assign ranking by index
         const result = sortedArr.map((dataEl, i) => {
           return { state: dataEl.state, data: i + 1 };
