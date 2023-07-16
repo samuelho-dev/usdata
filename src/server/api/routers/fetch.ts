@@ -1,18 +1,29 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { barVariables, radarVariables } from "~/utils/censusObjects";
 
 export const fetchRouter = createTRPCRouter({
   fetchStates: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.censusModel.findMany({
+    const states = await ctx.prisma.censusModel.findMany({
       select: {
         id: true,
-        year: true,
-        state: true,
         FIPS: true,
+        state: true,
       },
-      distinct: ["FIPS"],
+      distinct: ["state"],
     });
-    return data;
+
+    const years = await ctx.prisma.censusModel.findMany({
+      select: {
+        year: true,
+      },
+      distinct: ["year"],
+    });
+
+    return {
+      states: states,
+      years: years,
+    };
   }),
   fetchDatasetsByYear: publicProcedure
     .input(z.object({ year: z.number(), ids: z.array(z.string()) }))
@@ -29,31 +40,18 @@ export const fetchRouter = createTRPCRouter({
         },
       });
 
-      // console.log({ data }, "Models by year");
-
       return data;
     }),
   fetchRadarData: publicProcedure
     .input(z.array(z.object({ id: z.string() })))
     .mutation(async ({ ctx, input }) => {
-      type Check = {
-        [key: string]: string;
-      };
-
-      const check: Check = {
-        B19013_001E: `Past Year Median Household Income (inflation-adjusted)`,
-        B25003_002E: `Owner Occupied Housing Units`,
-        B25064_001E: `Median Gross Rent (Dollars)`,
-        B15003_022E: `Bachelor's Degree or Higher`,
-      };
-
       const data = await ctx.prisma.censusData.findMany({
         where: {
           census_id: {
             in: input.map((el) => el.id),
           },
           key: {
-            in: Object.keys(check),
+            in: Object.keys(radarVariables),
           },
         },
         select: {
@@ -70,7 +68,6 @@ export const fetchRouter = createTRPCRouter({
         },
       });
 
-      // console.log({ data, length: data.length }, "RADAR DATA");
       // {
       //   Data: [
       //     { id: 169, key: "B15003_022E", data: null, census_model: [Object] },
@@ -89,9 +86,12 @@ export const fetchRouter = createTRPCRouter({
 
       const obj: { [key: string]: DataObject } = {};
       for (const item of data) {
-        // First item is key
+        // First item is key, init max
         if (!obj[item.key]) {
-          obj[item.key] = { key: check[item.key], max: 0 } as DataObject;
+          obj[item.key] = {
+            key: radarVariables[item.key],
+            max: 0,
+          } as DataObject;
         }
 
         // Take the state as the key, data value
@@ -117,6 +117,7 @@ export const fetchRouter = createTRPCRouter({
         };
         for (const key in el) {
           if (key !== "key" && key !== "max" && el[key] !== 0) {
+            // Divide by the max
             normalizedEl[key] = (Number(el[key]) / el.max) * 100;
           } else {
             normalizedEl[key] = el[key];
@@ -124,8 +125,6 @@ export const fetchRouter = createTRPCRouter({
         }
         return normalizedEl;
       });
-
-      // console.log({ normalizedResult }, "RESULT");
 
       return normalizedResult;
     }),
@@ -187,7 +186,7 @@ export const fetchRouter = createTRPCRouter({
           };
         }
 
-        // normalize data and format
+        // normalize data and format (000,000)
         stateDataMap[el.state]?.data.push(
           ...el.data.map((dataEl) => {
             return {
@@ -207,19 +206,6 @@ export const fetchRouter = createTRPCRouter({
   fetchBarData: publicProcedure
     .input(z.array(z.object({ id: z.string() })))
     .mutation(async ({ ctx, input }) => {
-      type Check = {
-        [key: string]: string;
-      };
-
-      const check: Check = {
-        B01003_001E: `Total Population`,
-        B16001_002E: `Only English`,
-        B16001_003E: `Spanish`,
-        B16001_006E: `Other Indo-European Languages`,
-        B16001_009E: `Asian and Pacific Island Languages`,
-        B16001_012E: `Other Languages`,
-      };
-
       const data = await ctx.prisma.censusModel.findMany({
         where: {
           id: {
@@ -231,14 +217,7 @@ export const fetchRouter = createTRPCRouter({
           data: {
             where: {
               key: {
-                in: [
-                  "B01003_001E",
-                  "B16001_002E",
-                  "B16001_003E",
-                  "B16001_006E",
-                  "B16001_009E",
-                  "B16001_012E",
-                ],
+                in: Object.keys(barVariables),
               },
             },
             select: {
@@ -267,7 +246,7 @@ export const fetchRouter = createTRPCRouter({
 
         const lineData = el.data.reduce<LanguageData>((acc, dataEl) => {
           if (dataEl.key !== "B01003_001E") {
-            const keyName = check[dataEl.key];
+            const keyName = barVariables[dataEl.key];
             if (keyName) {
               acc[keyName] = (
                 (Number(dataEl.data) / Number(totalPopulation)) *
@@ -280,8 +259,6 @@ export const fetchRouter = createTRPCRouter({
 
         return { state: el.state, ...lineData };
       });
-
-      // console.log(normalizedData);
 
       // [{
       //   state: "AD",
@@ -309,28 +286,119 @@ export const fetchRouter = createTRPCRouter({
             },
           },
         },
+        distinct: ["state", "year"],
       });
+      // Output Given
       // [
       //   {
-      //     id: "Serie 1",
+      //     state: "GA",
+      //     year: 1975,
+      //     data: [ { data: 73 }, { data: 71 }, { data: 74 }, { data: 73 } ]
+      //   },
+      //   {
+      //     state: "GA",
+      //     year: 1976,
+      //     data: [[Object], [Object], [Object], [Object]],
+      //   },
+      // ];
+
+      // Output Needed
+      // [
+      //   {
+      //     id: "State",
       //     data: [
       //       {
       //         x: 2000,
       //         y: 1,
       //       },
+      //       {
+      //         x: 2001,
+      //         y: 1,
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     id: "State2",
+      //     data: [
+      //       {
+      //         x: 2000,
+      //         y: 2,
+      //       },
+      //       {
+      //         x: 2001,
+      //         y: 2,
+      //       },
       //     ],
       //   },
       // ];
-      const test = data.map((el) => {
-        return {
-          id: el.state,
-          data: el.data.map((dataEl) => {
-            return { x: el.year, y: dataEl.data };
-          }),
-        };
+      type dataObj = { state: string; data: number };
+      const stateMap = new Map<number, dataObj[]>();
+
+      data.forEach((el) => {
+        const average =
+          el.data.reduce((acc, dataEl) => acc + Number(dataEl.data), 0) /
+          el.data.length;
+
+        if (stateMap.has(el.year)) {
+          stateMap.get(el.year)?.push({ state: el.state, data: average });
+        } else {
+          stateMap.set(el.year, [{ state: el.state, data: average }]);
+        }
       });
 
-      // console.log(test);
-      return test;
+      const formattedData = Array.from(stateMap.entries()).map(
+        ([state, data]) => ({
+          id: state,
+          data: data,
+        })
+      );
+
+      // [
+      //   {
+      //     id: 1975,
+      //     data: [
+      //       { state: "HI", data: 58.5 },
+      //       { state: "NJ", data: 61.25 },
+      //     ],
+      //   },
+      // ];
+
+      const rankedData = formattedData.map((el) => {
+        const sortedArr = el.data.sort((a, b) => a.data - b.data);
+        // Sort the data and assign ranking by index
+        const result = sortedArr.map((dataEl, i) => {
+          return { state: dataEl.state, data: i + 1 };
+        });
+
+        return { id: el.id, data: result };
+      });
+
+      // [
+      //   { id: 1975, data: [ [Object], [Object], [Object] ] },
+      // ]
+      type resultObj = { x: number; y: number };
+
+      const resultMap = new Map<string, resultObj[]>();
+      rankedData.forEach((el) => {
+        el.data.forEach((dataEl) => {
+          if (resultMap.has(dataEl.state)) {
+            resultMap.get(dataEl.state)?.push({ x: el.id, y: dataEl.data });
+          } else {
+            resultMap.set(dataEl.state, [{ x: el.id, y: dataEl.data }]);
+          }
+        });
+      });
+
+      // console.log(
+      //   Array.from(resultMap, ([state, data]) => ({
+      //     id: state,
+      //     data: data,
+      //   }))
+      // );
+
+      return Array.from(resultMap, ([state, data]) => ({
+        id: state,
+        data: data,
+      }));
     }),
 });
