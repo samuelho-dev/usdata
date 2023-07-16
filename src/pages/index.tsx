@@ -82,7 +82,7 @@ export default function Home() {
       <div className="flex h-full max-w-3xl flex-col items-center justify-center gap-12 py-16 ">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Data{" "}
-          <span className="bg-gradient-to-b from-[#dd1f1f] to-[#f73e3e] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-b from-[#dd1f1f] to-[#FE704E] bg-clip-text text-transparent">
             USA
           </span>
         </h1>
