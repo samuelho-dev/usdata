@@ -65,10 +65,10 @@ export default function Home() {
     );
     setLineData(lineQueryData);
 
-    // const bumpQueryData = await bumpDataMutation.mutateAsync(
-    //   selectedStates.map((el) => el.FIPS)
-    // );
-    // setBumpData(bumpQueryData);
+    const bumpQueryData = await bumpDataMutation.mutateAsync(
+      selectedStates.map((el) => el.FIPS)
+    );
+    setBumpData(bumpQueryData);
 
     const barQueryData = await barDataMutation.mutateAsync(dataModels);
     setBarData(barQueryData);
@@ -84,23 +84,23 @@ export default function Home() {
         </h1>
         <div className="flex flex-col gap-4">
           <div className="flex w-full justify-center gap-4">
-            {Array.from({ length: 2010 - 2005 + 1 }, (_, i) => (
+            {statesQuery.data?.years?.map((el) => (
               <button
                 type="button"
-                onClick={() => setSelectedDate(2005 + i)}
+                onClick={() => setSelectedDate(el.year)}
                 className={`rounded-lg  px-1 hover:cursor-pointer hover:bg-[#0A145A] hover:text-white hover:outline hover:outline-1 hover:outline-white ${
-                  2005 + i === selectedDate
+                  el.year === selectedDate
                     ? "bg-[#2638C4] text-white"
                     : "bg-white"
                 }`}
-                key={2005 + i}
+                key={el.year}
               >
-                {2005 + i}
+                {el.year}
               </button>
             ))}
           </div>
           <div className="flex flex-wrap gap-2">
-            {statesQuery.data?.map((dataset) => (
+            {statesQuery.data?.states?.map((dataset) => (
               <button
                 key={dataset.FIPS}
                 onClick={() =>
@@ -158,6 +158,10 @@ export default function Home() {
                 <RadarChart data={radarData} />
               </div>
               <ChartHeaders variables={radarVariables} />
+              <p className="text-sm tracking-tighter text-white">
+                Comparasion of important KPIs per each state, dataset has been
+                normalized in comparasion to the max value of each variable.
+              </p>
             </div>
           )}
           {lineData && (
@@ -169,20 +173,36 @@ export default function Home() {
                 <LineChart data={lineData} />
               </div>
               <ChartHeaders variables={lineVariables} />
+              <p className="text-sm tracking-tighter text-white">
+                Growth of total housing units over time.
+              </p>
             </div>
           )}
 
-          {/* {bumpData && (
+          {bumpData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
-                Total Housing Units Over Time
+                Ranked By Housing Price Index (ASC) (1975 - 2023)
               </h2>
               <div className="h-96">
                 <BumpChart data={bumpData} />
               </div>
-              
+              <div>
+                <h5 className="text-lg text-white">
+                  Variables Used - Fred Economic Data
+                </h5>
+                <p className="text-sm text-white">
+                  <span className="text-[#FE704E]">STPHPI</span> :
+                  All-Transactions House Price Index
+                </p>
+                <p className="text-sm tracking-tighter text-white">
+                  Lower HPI indicates a slower rate in increasing housing
+                  prices. Higher HPI maybe more desireable due to the
+                  appreciation of housing value.
+                </p>
+              </div>
             </div>
-          )} */}
+          )}
 
           {barData && (
             <div className="flex h-full w-full flex-col">
@@ -193,6 +213,9 @@ export default function Home() {
                 <BarChart data={barData} />
               </div>
               <ChartHeaders variables={barVariables} />
+              <p className="text-sm tracking-tighter text-white">
+                Diversity of languages spoken at home.
+              </p>
             </div>
           )}
         </div>
