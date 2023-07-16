@@ -19,7 +19,9 @@ import {
 } from "~/utils/censusObjects";
 
 export default function Home() {
-  const statesQuery = api.fetch.fetchStates.useQuery();
+  const statesQuery = api.fetch.fetchStates.useQuery(undefined, {
+    cacheTime: Infinity,
+  });
   const datasetMutation = api.fetch.fetchDatasetsByYear.useMutation();
   const radarDataMutation = api.fetch.fetchRadarData.useMutation();
   const lineDataMutation = api.fetch.fetchLineData.useMutation();
