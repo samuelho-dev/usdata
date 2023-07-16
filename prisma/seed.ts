@@ -325,7 +325,7 @@ async function seed() {
   try {
     await censusKeySeed();
     await fredDataScrape();
-    for (let i = 2005; i <= 2010; i++) {
+    for (let i = 2005; i <= 2020; i++) {
       await fetchCensus(i);
     }
   } catch (e) {
