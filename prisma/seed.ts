@@ -119,7 +119,7 @@ async function createCensusData(
             census_variable: census_variable,
           },
         },
-        data: Number(values[0]) * 100,
+        data: Math.round(Number(values[0])),
       },
     });
   } catch (err) {
@@ -324,10 +324,10 @@ async function censusKeySeed() {
 async function seed() {
   try {
     await censusKeySeed();
-    await fredDataScrape();
     for (let i = 2005; i <= 2020; i++) {
       await fetchCensus(i);
     }
+    await fredDataScrape();
   } catch (e) {
     console.error(e);
     process.exit(1);

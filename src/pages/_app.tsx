@@ -8,7 +8,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <title>Census Data</title>
+        <title>US Data App</title>
         <meta
           name="description"
           content="Data viz for census and economic information"

@@ -20,7 +20,7 @@ model CensusData {
   id           Int         @id @default(autoincrement())
   census_key   CensusKey   @relation(fields: [key], references: [census_variable])
   key          String
-  data         BigInt?
+  data         Int?
   census_model CensusModel @relation(fields: [census_id], references: [id])
   census_id    String
 
