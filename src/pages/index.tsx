@@ -80,9 +80,9 @@ export default function Home() {
   return (
     <main className="flex h-full min-h-screen w-full items-center justify-center overflow-y-scroll bg-gradient-to-b from-[#0A145A] to-[#0c0c19]">
       <div className="flex h-full max-w-3xl flex-col items-center justify-center gap-12 py-16 ">
-        <h1 className=" text-7xl font-extrabold tracking-tight text-white">
+        <h1 className="text-7xl font-extrabold tracking-tight text-white">
           US{" "}
-          <span className="bg-gradient-to-b from-[#dd1f1f] to-[#FE704E] bg-clip-text text-transparent text-white">
+          <span className="bg-gradient-to-b from-[#dd1f1f] to-[#FE704E] bg-clip-text text-transparent">
             Data
           </span>{" "}
           App
