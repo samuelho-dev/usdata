@@ -157,20 +157,6 @@ export default function Home() {
         <div
           className={`flex w-full flex-col items-center justify-center gap-20`}
         >
-          {lineData && (
-            <div className="flex h-full w-full flex-col">
-              <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
-                Total Housing Units Over Time
-              </h2>
-              <div className="h-96">
-                <LineChart data={lineData} />
-              </div>
-              <p className="text-md py-4 tracking-tight text-white ">
-                Growth of total housing units over time.
-              </p>
-              <ChartHeaders variables={lineVariables} />
-            </div>
-          )}
           {radarData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
@@ -185,6 +171,20 @@ export default function Home() {
                 normalized in comparasion to the max value of each variable.
               </p>
               <ChartHeaders variables={radarVariables} />
+            </div>
+          )}
+          {lineData && (
+            <div className="flex h-full w-full flex-col">
+              <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">
+                Total Housing Units Over Time
+              </h2>
+              <div className="h-96">
+                <LineChart data={lineData} />
+              </div>
+              <p className="text-md py-4 tracking-tight text-white ">
+                Growth of total housing units over time.
+              </p>
+              <ChartHeaders variables={lineVariables} />
             </div>
           )}
           {bumpData && (
@@ -212,7 +212,6 @@ export default function Home() {
               </div>
             </div>
           )}
-
           {barData && (
             <div className="flex h-full w-full flex-col">
               <h2 className="whitespace-nowrap text-xl tracking-tight text-white underline decoration-[#FFCF00] underline-offset-8">

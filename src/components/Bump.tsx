@@ -124,19 +124,19 @@ const BumpChart = ({ data }: BumpChartComponentSchema) => (
   <ResponsiveBumpChart
     data={data}
     theme={theme}
-    interpolation="linear"
+    interpolation="smooth"
     colors={{ scheme: "green_blue" }}
     xPadding={0.25}
-    lineWidth={3}
-    activeLineWidth={6}
-    inactiveLineWidth={3}
-    inactiveOpacity={0.15}
+    lineWidth={2}
     pointSize={3}
-    activePointSize={16}
+    inactiveLineWidth={1}
+    inactiveOpacity={0.15}
     inactivePointSize={0}
+    activeLineWidth={4}
+    activePointSize={10}
+    activePointBorderWidth={2}
     pointColor={{ theme: "background" }}
     pointBorderWidth={3}
-    activePointBorderWidth={3}
     pointBorderColor={{ from: "serie.color" }}
     enableGridX={false}
     axisTop={null}
