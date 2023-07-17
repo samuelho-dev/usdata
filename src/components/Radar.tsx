@@ -138,7 +138,7 @@ const RadarChart = ({ data }: RadarChartComponentSchema) => (
     dotSize={10}
     dotColor={{ theme: "background" }}
     dotBorderWidth={2}
-    colors={{ scheme: "paired" }}
+    colors={{ scheme: "nivo" }}
     blendMode="exclusion"
     motionConfig="wobbly"
     legends={[
